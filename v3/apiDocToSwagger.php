@@ -319,11 +319,44 @@ class apiDocToSwagger {
             'description' => $apiDocParam['description']
         ];
 
+        if (isset($apiDocParam['allowedValues']) && !empty($apiDocParam['allowedValues'])) {
+            foreach ($apiDocParam['allowedValues'] as $allowedValue) {
+                $param['description'] .= "\n {$allowedValue}";
+                $enum = $this->getEnumValue($allowedValue);
+                $param['schema']['enum'][] = $enum;
+            }
+        }
+
         if (isset($apiDocParam['optional']) && !$apiDocParam['optional']) {
             $param['required'] = true;
         }
 
         return $param;
+    }
+
+    /**
+     * 去除奇怪符號只取資料
+     */
+    private function getEnumValue($oriEnum)
+    {
+        $enum = $oriEnum;
+        // 去除 :
+        $firstExplodeAry = explode(":", $oriEnum);
+        $enum = $firstExplodeAry[0];
+
+        if (isset($firstExplodeAry[1]) && !empty($firstExplodeAry[1])) {
+            $enum = $firstExplodeAry[1];
+        }
+
+        // 去除 "
+        $finialExplodeAry = explode("\"", $enum);
+        $enum = $finialExplodeAry[0];
+
+        if (isset($finialExplodeAry[1]) && !empty($finialExplodeAry[1])) {
+            $enum = $finialExplodeAry[1];
+        }
+
+        return $enum;
     }
 
     /**
@@ -555,6 +588,15 @@ class apiDocToSwagger {
             'type'        => isset($typeMap[$info['type']]) ? $typeMap[$info['type']] : 'string',
             'description' => $info['description']
         ];
+
+        // notes 如果有 allow values 參數代表該 type 不會是 object/ array
+        if (isset($info['allowedValues']) && !empty($info['allowedValues'])) {
+            foreach ($info['allowedValues'] as $allowedValue) {
+                $property['description'] .= "\n {$allowedValue}";
+                $enum = $this->getEnumValue($allowedValue);
+                $property['enum'][] = $enum;
+            }
+        }
 
         $required = false;
         if (!$info['optional']) {
