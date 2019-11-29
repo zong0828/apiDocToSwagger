@@ -5,8 +5,8 @@ include('helper.php');
 
 // 取得 php team backend api doc
 $team = 'php';
-$apiDoc = Helper::getApiDoc($env[$team]['doc_data']['backend']);
-$phpBackendSwaggerDoc = (new apiDocToSwagger($team, $env[$team]['doc']['backend']))->main($apiDoc);
+$apiDoc = Helper::getApiDoc($env[$team]['doc_data']['backend_master']);
+$phpBackendSwaggerDoc = (new apiDocToSwagger($team, $env[$team]['doc']['backend_master']))->main($apiDoc);
 
 // 取得 node js team backend api doc
 $team = 'node.js';
@@ -29,3 +29,17 @@ $nodeJsFrontendSwaggerDoc = (new apiDocToSwagger($team, $env[$team]['doc']['fron
 
 $frontendSwaggerDoc = array_merge($basicFormat, $nodeJsFrontendSwaggerDoc);
 Helper::generate_json_file($frontendSwaggerDoc, 'frontend_api');
+
+// generater php backend brand and dos api doc
+$team = 'php';
+$apiDoc = Helper::getApiDoc($env[$team]['doc_data']['backend_brand']);
+$phpBackendSwaggerDoc = (new apiDocToSwagger($team, $env[$team]['doc']['backend_brand']))->main($apiDoc);
+
+$brandSwaggerDoc = array_merge($basicFormat, $phpBackendSwaggerDoc);
+Helper::generate_json_file($brandSwaggerDoc, 'backend_brand_api');
+
+$apiDoc = Helper::getApiDoc($env[$team]['doc_data']['backend_dos']);
+$phpBackendSwaggerDoc = (new apiDocToSwagger($team, $env[$team]['doc']['backend_dos']))->main($apiDoc);
+
+$brandSwaggerDoc = array_merge($basicFormat, $phpBackendSwaggerDoc);
+Helper::generate_json_file($brandSwaggerDoc, 'backend_dos_api');
