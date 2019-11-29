@@ -702,8 +702,10 @@ class apiDocToSwagger {
 
         if (isset($apiDocSuccess['examples'][0]['content'])) {
             $example = explode($explodText, $apiDocSuccess['examples'][0]['content']);
-            $exampleAry = json_decode($example[1], true);
-            $response['example'] = $exampleAry;
+            if (isset($example[1])) {
+                $exampleAry = json_decode($example[1], true);
+                $response['example'] = $exampleAry;
+            }
         }
 
         return $response;
