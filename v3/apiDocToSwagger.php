@@ -262,12 +262,6 @@ class apiDocToSwagger {
     private function setParams($method, $apiDocParams) {
 
         $params = [];
-        $typeMap = [
-            'String'   => 'string',
-            'Object'   => 'object',
-            'Object[]' => 'array',
-            'String[]' => 'array'
-        ];
 
         foreach ($apiDocParams as $apiDocParam) {
             if ($method === 'get') {
@@ -581,13 +575,18 @@ class apiDocToSwagger {
         $typeMap = [
             'String' => 'string',
             'Object' => 'object',
-            'Object[]' => 'array'
+            'Object[]' => 'array',
+            'String[]' => 'array'
         ];
 
         $property = [
             'type'        => isset($typeMap[$info['type']]) ? $typeMap[$info['type']] : 'string',
             'description' => $info['description']
         ];
+
+        if ($info['type'] == 'String[]') {
+            $property['items']['type'] = 'string';
+        }
 
         // notes 如果有 allow values 參數代表該 type 不會是 object/ array
         if (isset($info['allowedValues']) && !empty($info['allowedValues'])) {
