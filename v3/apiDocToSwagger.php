@@ -19,15 +19,26 @@ class apiDocToSwagger {
     ];
     private $team;
     private $docUrl;
+    private $docName;
+    // 因為有一些文件缺漏，用程式寫 log 紀錄是哪隻 api 缺少參數。
+    private $log = '';
+    private $date = '';
 
-    public function __construct($team, $docUrl)
+    public function __construct($config)
     {
-        if (empty($team) || empty($docUrl)) {
-            throw new Exception("未帶必要參數");
+        $requireColumn = [
+            'team', 'docName', 'docUrl'
+        ];
+
+        foreach ($requireColumn as $column) {
+            if (empty($config[$column])) {
+                throw new Exception("未帶必要參數");
+            }
+
+            $this->$column = $config[$column];
         }
 
-        $this->team = $team;
-        $this->docUrl = $docUrl;
+        $this->date = date('Y-m-d');
     }
 
     /**
@@ -70,6 +81,9 @@ class apiDocToSwagger {
      */
     private function convertToSwagger($swaggerDoc, $api)
     {
+        // log name
+        $this->log = "{$this->team}-{$this->docName}: {$api['title']}";
+
         $url = $this->setUrl($api['url']);
         $method = $this->setMethod($api['type']);
         $group = $api['group'];
@@ -155,6 +169,8 @@ class apiDocToSwagger {
             ];
 
             $swaggerDoc['components']['schemas'][$schemaName] = $this->setResponseData($apiDocSuccess, 'success');
+        } else {
+            file_put_contents("log/missSuccessResponse_{$this->date}", "{$this->log}\n", FILE_APPEND);
         }
 
         if (!empty($apiDocError)) {
@@ -552,6 +568,7 @@ class apiDocToSwagger {
 
                 $params[] = $pushParam;
             }
+            file_put_contents("log/missPathParams_{$this->date}", "{$this->log}\n", FILE_APPEND);
         }
 
         return $params;
