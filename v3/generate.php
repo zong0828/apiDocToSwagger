@@ -73,7 +73,10 @@ $phpBackendSwaggerDoc = (new apiDocToSwagger($config))->main($apiDoc);
 
 $brandSwaggerDoc = array_merge($basicFormat, $phpBackendSwaggerDoc);
 Helper::generate_json_file($brandSwaggerDoc, 'backend_dos_api');
+// 更新文件更新時間
+shell_exec('sh /home/zong/Applications/apidocToSwagger/v3/updateTime.sh');
 
+// 發送 rocket 通知
 $params = [
     'rocketUrl' => $rocketDomain,
     'account'   => $account,
