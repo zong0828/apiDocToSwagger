@@ -47,7 +47,7 @@ class helper {
 
     public static function sendMessage($params)
     {
-        $user = self::login($params['account']);
+        $user = self::login($params['rocketUrl'], $params['account']);
 
         $curl = curl_init();
 
@@ -57,7 +57,7 @@ class helper {
         ];
 
         curl_setopt_array($curl, array(
-             CURLOPT_URL            => "https://ec-rocketchat.udn.com/api/v1/chat.postMessage",
+             CURLOPT_URL            => "{$params['rocketUrl']}/api/v1/chat.postMessage",
              CURLOPT_RETURNTRANSFER => true,
              CURLOPT_ENCODING       => "",
              CURLOPT_MAXREDIRS      => 10,
@@ -87,13 +87,13 @@ class helper {
         }
     }
 
-    private static function login($account)
+    private static function login($rocketUrl, $account)
     {
         $curl = curl_init();
 
         curl_setopt_array($curl,
             array(
-            CURLOPT_URL            => "https://ec-rocketchat.udn.com/api/v1/login",
+            CURLOPT_URL            => "{$rocketUrl}/api/v1/login",
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING       => "",
             CURLOPT_MAXREDIRS      => 10,
