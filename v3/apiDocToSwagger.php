@@ -170,7 +170,7 @@ class apiDocToSwagger {
 
             $swaggerDoc['components']['schemas'][$schemaName] = $this->setResponseData($apiDocSuccess, 'success');
         } else {
-            file_put_contents("log/missSuccessResponse_{$this->date}", "{$this->log}\n", FILE_APPEND);
+            file_put_contents("/home/zong/Applications/apidocToSwagger/v3/log/missSuccessResponse_{$this->date}", "{$this->log}\n", FILE_APPEND);
         }
 
         if (!empty($apiDocError)) {
@@ -568,7 +568,7 @@ class apiDocToSwagger {
 
                 $params[] = $pushParam;
             }
-            file_put_contents("log/missPathParams_{$this->date}", "{$this->log}\n", FILE_APPEND);
+            file_put_contents("/home/zong/Applications/apidocToSwagger/v3/log/missPathParams_{$this->date}", "{$this->log}\n", FILE_APPEND);
         }
 
         return $params;

@@ -37,7 +37,7 @@ class helper {
         $date = date('Y-m-d');
         $file_name = "{$title}_{$date}.json";
         $doc = json_encode($doc, JSON_UNESCAPED_UNICODE);
-        file_put_contents("json/" . $file_name, $doc);
+        file_put_contents("/home/zong/Applications/apidocToSwagger/v3/json/" . $file_name, $doc);
         $swaggerServerPath = "/home/zong/data/swagger-doc/api/doc/{$title}.json";
         file_put_contents($swaggerServerPath, $doc);
 
