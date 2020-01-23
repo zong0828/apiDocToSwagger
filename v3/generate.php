@@ -73,3 +73,9 @@ $phpBackendSwaggerDoc = (new apiDocToSwagger($config))->main($apiDoc);
 
 $brandSwaggerDoc = array_merge($basicFormat, $phpBackendSwaggerDoc);
 Helper::generate_json_file($brandSwaggerDoc, 'backend_dos_api');
+
+
+Helper::sendMessage([
+    'account' => $account,
+    'message' => $message
+]);
