@@ -3,13 +3,18 @@ include('config.php');
 include('apiDocToSwagger.php');
 include('helper.php');
 
+// 先登入 rocket
+$user = Helper::login($rocketDomain, $account);
+
 // 取得 php team backend api doc
 $team = 'php';
 $apiDoc = Helper::getApiDoc($env[$team]['doc_data']['backend_master']);
 $config = [
     'team'    => $team,
     'docUrl'  => $env[$team]['doc']['backend_master'],
-    'docName' => 'backend_master'
+    'docName' => 'backend_master',
+    'user'    => $user,
+    'rocketUrl' => $rocketDomain
 ];
 
 $phpBackendSwaggerDoc = (new apiDocToSwagger($config))->main($apiDoc);
@@ -54,7 +59,9 @@ $apiDoc = Helper::getApiDoc($env[$team]['doc_data']['backend_brand']);
 $config = [
     'team'    => $team,
     'docUrl'  => $env[$team]['doc']['backend_brand'],
-    'docName' => 'backend_brand'
+    'docName' => 'backend_brand',
+    'user'    => $user,
+    'rocketUrl' => $rocketDomain
 ];
 
 $phpBackendSwaggerDoc = (new apiDocToSwagger($config))->main($apiDoc);
@@ -66,7 +73,9 @@ $apiDoc = Helper::getApiDoc($env[$team]['doc_data']['backend_dos']);
 $config = [
     'team'    => $team,
     'docUrl'  => $env[$team]['doc']['backend_dos'],
-    'docName' => 'backend_dos'
+    'docName' => 'backend_dos',
+    'user'    => $user,
+    'rocketUrl' => $rocketDomain
 ];
 
 $phpBackendSwaggerDoc = (new apiDocToSwagger($config))->main($apiDoc);
@@ -80,7 +89,8 @@ shell_exec('sh /home/zong/Applications/apidocToSwagger/v3/updateTime.sh');
 $params = [
     'rocketUrl' => $rocketDomain,
     'account'   => $account,
-    'message'   => $message
+    'message'   => $message,
+    'user'      => $user
 ];
 
 Helper::sendMessage($params);

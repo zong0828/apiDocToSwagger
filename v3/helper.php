@@ -47,7 +47,9 @@ class helper {
 
     public static function sendMessage($params)
     {
-        $user = self::login($params['rocketUrl'], $params['account']);
+        if (!isset($params['user'])) {
+            $params['user'] = self::login($params['rocketUrl'], $params['account']);
+        }
 
         $curl = curl_init();
 
@@ -70,8 +72,8 @@ class helper {
              CURLOPT_POSTFIELDS     => json_encode($body, JSON_UNESCAPED_UNICODE),
              CURLOPT_HTTPHEADER     => array(
                                         "Content-Type: application/json",
-                                        "X-Auth-Token: {$user['authToken']}",
-                                        "X-User-Id: {$user['userId']}"
+                                        "X-Auth-Token: {$params['user']['authToken']}",
+                                        "X-User-Id: {$params['user']['userId']}"
              ),
         ));
 
@@ -87,7 +89,7 @@ class helper {
         }
     }
 
-    private static function login($rocketUrl, $account)
+    public static function login($rocketUrl, $account)
     {
         $curl = curl_init();
 

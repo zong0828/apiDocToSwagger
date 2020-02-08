@@ -24,6 +24,10 @@ class apiDocToSwagger {
     private $log = '';
     private $date = '';
 
+    // rocket notes
+    protected $user = null;
+    protected $rocketUrl = '';
+
     public function __construct($config)
     {
         $requireColumn = [
@@ -39,6 +43,9 @@ class apiDocToSwagger {
         }
 
         $this->date = date('Y-m-d');
+
+        $this->user = isset($config['user']) ? $config['user'] : null;
+        $this->rocketUrl = isset($config['rocketUrl']) ? $config['rocketUrl'] : '';
     }
 
     /**
@@ -170,7 +177,20 @@ class apiDocToSwagger {
 
             $swaggerDoc['components']['schemas'][$schemaName] = $this->setResponseData($apiDocSuccess, 'success');
         } else {
-            file_put_contents("/home/zong/Applications/apidocToSwagger/v3/log/missSuccessResponse_{$this->date}", "{$this->log}\n", FILE_APPEND);
+
+            if (empty($this->user)) {
+                file_put_contents("/home/zong/Applications/apidocToSwagger/v3/log/missSuccessResponse_{$this->date}", "{$this->log}\n", FILE_APPEND);
+            } else {
+                $message = "缺少成功範例：{$this->log}";
+                Helper::sendMessage(
+                    [
+                        'rocketUrl' => $this->rocketUrl,
+                        'message'   => $message,
+                        'user'      => $this->user
+                    ]
+                );
+            }
+
         }
 
         if (!empty($apiDocError)) {
@@ -568,7 +588,18 @@ class apiDocToSwagger {
 
                 $params[] = $pushParam;
             }
-            file_put_contents("/home/zong/Applications/apidocToSwagger/v3/log/missPathParams_{$this->date}", "{$this->log}\n", FILE_APPEND);
+            if (empty($this->user)) {
+                file_put_contents("/home/zong/Applications/apidocToSwagger/v3/log/missPathParams_{$this->date}", "{$this->log}\n", FILE_APPEND);
+            } else {
+                $message = "缺少 Path Params：{$this->log}";
+                Helper::sendMessage(
+                    [
+                        'rocketUrl' => $this->rocketUrl,
+                        'message'   => $message,
+                        'user'      => $this->user
+                    ]
+                );
+            }
         }
 
         return $params;
