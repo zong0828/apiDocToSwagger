@@ -550,14 +550,14 @@ class apiDocToSwagger {
         $requireColumn = [
             'type',
             'url',
-            'title',
+            // 'title',
             'name',
             'group'
         ];
 
         foreach ($requireColumn as $column) {
             if (empty($apiAry[$column])) {
-                throw new Exception("缺失必要欄位 {$url}");
+                throw new Exception("缺失必要欄位 {$apiAry['url']}");
             }
         }
     }
