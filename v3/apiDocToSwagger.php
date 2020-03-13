@@ -89,7 +89,7 @@ class apiDocToSwagger {
     private function convertToSwagger($swaggerDoc, $api)
     {
         // log name
-        $this->log = "{$this->team}-{$this->docName}: {$api['title']}";
+        $this->log = "{$this->team}-{$this->docName}: {$api['title']} - {$api['name']}";
 
         $url = $this->setUrl($api['url']);
         $method = $this->setMethod($api['type']);
@@ -557,7 +557,7 @@ class apiDocToSwagger {
 
         foreach ($requireColumn as $column) {
             if (empty($apiAry[$column])) {
-                throw new Exception("缺失必要欄位 {$apiAry['url']}");
+                throw new Exception("缺失必要欄位 {$apiAry['url']} {$apiAry['name']}");
             }
         }
     }
