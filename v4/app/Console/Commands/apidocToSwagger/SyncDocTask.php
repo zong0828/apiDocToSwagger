@@ -4,6 +4,7 @@ namespace App\Console\Commands\apidocToSwagger;
 
 use Illuminate\Console\Command;
 use App\Services\Swagger\SwaggerService;
+use App\Repositories\ProjectRepository;
 use Log;
 use Throwable;
 
@@ -25,16 +26,21 @@ class SyncDocTask extends Command
     protected $description = 'apidoc json convert to swagger json';
 
     private $swaggerService;
+    private $projectRepo;
 
     /**
      * Create a new command instance.
      *
      * @return void
      */
-    public function __construct(SwaggerService $swaggerService)
-    {
+    public function __construct(
+        SwaggerService    $swaggerService,
+        ProjectRepository $projectRepo
+    ) {
         parent::__construct();
+
         $this->swaggerService = $swaggerService;
+        $this->projectRepo = $projectRepo;
     }
 
     /**
@@ -44,7 +50,11 @@ class SyncDocTask extends Command
      */
     public function handle()
     {
-        echo "Start Sync Doc Task \n";
-        $this->swaggerService->main();
+        echo "|--- Start Sync Doc Task --|\n";
+
+        $filter = [ 'is_enable' => true ];
+        $projects = $this->projectRepo->getListByFilter($filter, true);
+
+        var_export($projects);
     }
 }
