@@ -22,7 +22,7 @@ class CreateProjectTable extends Migration
                 $table->id();
                 $table->string('name', 20)->comment('名稱');
                 $table->string('version', 10)->comments('doc version');
-                $table->boolean('status')->default(0)->comment('projects 啟用狀態');
+                $table->boolean('is_enable')->default(0)->comment('projects 啟用狀態');
                 $table->boolean('is_notify')->default(0)->comment('是否需要推播通知');
                 $table->string('maintainer', 20)->comment('文件聯繫人');
                 $table->text('url')->commect('文件 domain');
