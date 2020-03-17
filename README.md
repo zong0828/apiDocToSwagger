@@ -10,7 +10,10 @@ mv v3/config_example.php v3/config.php
 ```
 
 ## version
-- 目前版本 auth ，使用 JWT 的 auth bearer
+
+v3 - convert apidoc document to swagger document by pure php code (release)
+
+v4 - laravel structure (dev)
 
 ## example
 ``` php v3/generate.php ```
