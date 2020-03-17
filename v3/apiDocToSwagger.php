@@ -624,7 +624,8 @@ class apiDocToSwagger {
             'String' => 'string',
             'Object' => 'object',
             'Object[]' => 'array',
-            'String[]' => 'array'
+            'String[]' => 'array',
+            'Boolean'  => 'boolean'
         ];
 
         $property = [
