@@ -1,0 +1,3 @@
+10001:
+  type: ARGUMENT_ERROR
+  message: 仍有必填欄位未填寫,請重新確認
