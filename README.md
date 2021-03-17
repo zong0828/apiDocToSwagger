@@ -11,9 +11,9 @@ mv v3/config_example.php v3/config.php
 
 ## version
 
-v3 - convert apidoc document to swagger document by pure php code (release)
+v1 - convert apidoc document to swagger document by pure php code (release)
 
-v4 - laravel structure (dev)
+v2 - lumen structure 
 
 ## example
-``` php v3/generate.php ```
+``` php v1/generate.php ```
