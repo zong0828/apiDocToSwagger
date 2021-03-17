@@ -1,0 +1,491 @@
+openapi: 3.0.1
+info:
+  title: MemberCenter
+  description: |
+    會員中心
+    # 修訂紀錄
+    |date|fix content|
+    |---|---|
+    |2019-10-30|<b>調整</b>: <br>status欄位資料小寫更改為大寫 success -> SUCCESS<br>services 結構異動 -> [{name,image, link{type,value,transitions}}]<br>social_media_community 結構異動 ->  [{name,image, link{type,value,transitions}}]<br>banner 結構異動 -> [{name,image, link{type,value,transitions}}]<br><b>新增:</b> <br>member_vip_config 內 新增 link 參數連結至規則頁<br>member 內新增 email、login_times<br>recommended_products、vip_products、coupon_products 呈現方式改使用 link 格式 |
+  version: 1.0.1
+externalDocs:
+  description: sitemap_v2
+  url: https://wrcu8s.axshare.com/#g=1&p=sitemap_v2&c=1
+servers:
+- url: http://alpha-api-ubss.udnshopping.com/admin/v1
+  description: the alpha server api
+- url: http://beta-api-ubss.udnshopping.com/admin/v1
+  description: the beta server api
+security:
+- bearerAuth: []
+tags:
+- name: MemberCenter
+  description: 會員中心
+paths:
+  /member_center:
+    get:
+      tags:
+      - MemberCenter
+      summary: 取得會員中心頁資訊
+      description: get memberInfo, orderCounter, and so on
+      externalDocs:
+        description: spec
+        url: https://cz64sy.axshare.com/#g=1&p=%E6%9C%83%E5%93%A1%E4%B8%AD%E5%BF%83
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/MemberCenterData'
+                  id:
+                    type: string
+                    description: process id
+                    example: c679a359beabb184c644fbb3704f7241
+                  status:
+                    type: string
+                    description: status code
+                    example: SUCCESS
+        404: 
+          description: "找不到該 path"
+          content:
+            application/json::
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+components:
+  schemas:
+    MemberCenterData:
+      type: object
+      description: |
+              member center data，
+              1. 如果該欄位，有可能因為未登入、未設定原因，導致該欄位無資料，資料會以 null 進行顯示
+              2. 欄位前面星號代表該欄位不會是 null
+              3. 如果 array 沒有資料或為設定會以 [] 顯示
+      required: 
+        - member
+        - member_vip_config
+      properties:
+        greeting_message:
+          type: string
+          description: |
+              品牌商可自訂用戶狀態，自訂罐頭語
+              |登入狀態|文案|
+              |----|----|
+              |首次登入|Hi，歡迎新朋友，記得領取新會員優惠|
+              |非首次登入 + 會員資料不完整|歡迎回來，填寫會員資料可享優惠。|
+              |非首次登入 + 會員資料完整|歡迎回來，會員專屬優惠記得領取喔!|
+              |未登入|不顯示內容|
+          example: "Hi，歡迎新朋友，記得領取新會員優惠。"
+        member:
+          type: object
+          properties:
+            member_name:
+              type: string
+              description: 姓名
+              example: 陳大明
+            mobile:
+              type: string
+              description: 門號
+              example: "0921001211"
+            email:
+              type: string
+              description: Email
+              example: "xx@gmail.com"
+            login_times:
+              type: integer
+              description: 登入次數
+              example: 1
+            level:
+              type: integer
+              description: 會員目前等級
+              example: 3
+            level_point:
+              type: integer
+              description: 會員目前積分
+              example: 3300
+            coupon:
+              type: integer
+              description: 折價卷(張)，如未啟用資料為 null
+              example: 3
+            shopping_cash:
+              type: integer
+              description: 購物金，如未啟用資料為 null
+              example: 3000
+            bonus:
+              type: integer
+              description: 點數，如未啟用資料為 null
+              example: 300
+            incomplete_member_fields:
+              type: integer
+              description: 基本資料缺失數量
+              example: 2
+            notification_number:
+              type: integer
+              description: 我的通知數量
+              example: 1
+          description: 會員資料
+        member_vip_config:
+          type: object
+          required: 
+            - type
+            - link
+            - list
+          properties:
+            type:
+              type: string
+              description: 等級類型(level=一般, point=積分, none=無分級機制)
+              enum:
+              - level
+              - point
+              - none
+            link:
+              type: object
+              description: |
+                link 格式與參數已 https://pse.is/LX8VW 為標準
+              properties:
+                type:
+                  type: string
+                  description: 定義頁面類型
+                value:
+                  type: string
+                  description: |
+                    下個頁面所需參數
+                    目前只有當 type 是 web_view、custom_page 時才會有值
+                transitions:
+                  type: string
+                  description: | 
+                        過場方式 (default push)
+            list:
+              type: array
+              items:
+                type: object
+                properties:
+                  level:
+                    type: integer
+                    description: 等級
+                  name:
+                    type: string
+                    description: 等級名稱
+                  point:
+                    type: integer
+                    description: 要求積分
+                  image:
+                    type: string
+                    description: 等級圖
+          description: 會員等級/積分設定檔
+          example:
+            type: level
+            link:
+              type: web_view
+              value: http://vip.rule.com
+              transitions: push
+            list:
+            - level: 1
+              name: 等級一
+              point: 1000
+              image: http://udn.image/1.image
+            - level: 2
+              name: 等級二
+              point: 2000
+              image: http://udn.image/2.image
+            - level: 3
+              name: 等級三
+              point: 3000
+              image: http://udn.image/3.image
+            - level: 4
+              name: 等級四
+              point: 4000
+              image: http://udn.image/4.image
+            - level: 5
+              name: 等級五
+              point: 5000
+              image: http://udn.image/5.image 
+        services:
+          type: array
+          description: 我的服務
+          items:
+            type: object
+            required: 
+              - name
+              - image
+              - link
+            properties:
+              name:
+                type: string
+                description: 頁面名稱
+              image:
+                type: string
+                description: image link
+              link:
+                $ref: '#/components/schemas/link'
+          example:
+          - name: 會員資料
+            image: http://img.udn.com/image/icon/profile
+            link: 
+              type: member_profile
+              value: null
+              transitions: push
+          - name: 結帳設定
+            image: http://img.udn.com/image/icon/pay_setting
+            link: 
+              type: member_billing
+              value: null
+              transitions: push
+          - name: 通知
+            image: http://img.udn.com/image/icon/my_notice
+            link: 
+              type: notification
+              value: null
+              transitions: push
+          - name: 幫助中心
+            image: http://img.udn.com/image/icon/helper_center
+            link: 
+              type: helper_center
+              value: null
+              transitions: push
+          - name: 通知
+            image: http://img.udn.com/image/icon/my_notice
+            link: 
+              type: notification
+              value: null
+              transitions: push
+          - name: 設定
+            image: http://img.udn.com/image/icon/member_setting
+            link: 
+              type: member_setting
+              value: null
+              transitions: push
+          - name: 訪客訂單
+            image: http://img.udn.com/image/icon/visitor_order
+            link: 
+              type: visitor_order
+              value: null
+              transitions: push
+        social_media_community:
+          description: "品牌官方社群功能，連結到對應網址"
+          type: array
+          items:
+            type: object
+            required: 
+              - name
+              - image
+              - link
+            properties:
+              name:
+                type: string
+                enum: 
+                  - line
+                  - facebook
+                  - instagram
+              image:
+                type: string
+                description: "社群標示圖"
+              link:
+                $ref: '#/components/schemas/link'
+          example: 
+          - name: line
+            image: http://udn.image.com/icon/line.jpg
+            link: 
+              type: web_view
+              value: http://line.com
+              transitions: push
+          - name: facebook
+            image: http://udn.image.com/icon/facebook.jpg
+            link: 
+              type: web_view
+              value: https://www.facebook.com/
+              transitions: push
+          - name: instagram
+            image: http://udn.image.com/icon/instagram.jpg
+            link: 
+              type: web_view
+              value: https://www.instagram.com/?hl=zh-tw
+              transitions: push
+        banner:
+          type: array
+          description: 行銷 banner
+          items:
+            type: object
+            required: 
+              - name
+              - image
+              - link
+            properties:
+              name:
+                type: string
+                description: banner title
+              image:
+                type: string
+                description: banner image
+              link:
+                $ref: '#/components/schemas/link'
+          example: 
+          - name: banner01
+            image: http://image.com/banner01.jpg
+            link:
+              type: web_view
+              value: http://next.page.one.com
+              transitions: push
+          - name: banner02
+            image: http://image.com/banner02.jpg
+            link:
+              type: web_view
+              value: http://next.page.two.com
+              transitions: push
+        recommended_products:
+          type: array
+          description: 為你推薦商品
+          items:
+            type: object
+            required: 
+              - name
+              - image
+              - link
+            properties:
+              name:
+                type: string
+                description: 商品名稱
+              image:
+                type: string
+                description: 商品圖片
+              price:
+                type: string
+                description: 商品價格
+              is_favorite:
+                type: boolean
+                description: 是否為收藏狀態
+              link:
+                $ref: '#/components/schemas/link'
+          example:
+          - name: (組合)★快速到貨★羅技 Logitech G903 專業電競無線遊戲滑鼠 + POWERPLAY 無線充電遊戲滑鼠墊
+            image: http://img.udn.com/image/product/S0000390/APPROVED/U010193378/20180124150533274_135.jpg
+            price: "480"
+            is_favorite: false
+            link:
+              type: product
+              value: "1"
+              transitions: push
+          - name: (組合)★快速到貨★羅技 Logitech G903 專業電競無線遊戲滑鼠 + POWERPLAY 無線充電遊戲滑鼠墊
+            image: http://img.udn.com/image/product/S0000390/APPROVED/U010193378/20180124150533274_135.jpg
+            price: "480"
+            is_favorite: false
+            link:
+              type: product
+              value: "2"
+              transitions: push
+        vip_products:
+          type: array
+          description: 會員等級專屬推薦產品
+          items:
+            type: object
+            required: 
+              - name
+              - image
+              - link
+            properties:
+              name:
+                type: string
+                description: 商品名稱
+              image:
+                type: string
+                description: 商品圖片
+              price:
+                type: string
+                description: 商品價格
+              is_favorite:
+                type: boolean
+                description: 是否為收藏狀態
+              link:
+                $ref: '#/components/schemas/link'
+          example:
+          - name: (組合)★快速到貨★羅技 Logitech G903 專業電競無線遊戲滑鼠 + POWERPLAY 無線充電遊戲滑鼠墊
+            image: http://img.udn.com/image/product/S0000390/APPROVED/U010193378/20180124150533274_135.jpg
+            price: "480"
+            is_favorite: false
+            link:
+              type: product
+              value: "1"
+              transitions: push
+          - name: (組合)★快速到貨★羅技 Logitech G903 專業電競無線遊戲滑鼠 + POWERPLAY 無線充電遊戲滑鼠墊
+            image: http://img.udn.com/image/product/S0000390/APPROVED/U010193378/20180124150533274_135.jpg
+            price: "480"
+            is_favorite: false
+            link:
+              type: product
+              value: "2"
+              transitions: push
+        coupon_products:
+          type: array
+          description: 會員折價券適用商品
+          items:
+            type: object
+            required: 
+              - name
+              - image
+              - link
+            properties:
+              name:
+                type: string
+                description: 商品名稱
+              image:
+                type: string
+                description: 商品圖片
+              price:
+                type: string
+                description: 商品價格
+              is_favorite:
+                type: boolean
+                description: 是否為收藏狀態
+              link:
+                $ref: '#/components/schemas/link'
+          example:
+          - name: (組合)★快速到貨★羅技 Logitech G903 專業電競無線遊戲滑鼠 + POWERPLAY 無線充電遊戲滑鼠墊
+            image: http://img.udn.com/image/product/S0000390/APPROVED/U010193378/20180124150533274_135.jpg
+            price: "480"
+            is_favorite: false
+            link:
+              type: product
+              value: "1"
+              transitions: push
+          - name: (組合)★快速到貨★羅技 Logitech G903 專業電競無線遊戲滑鼠 + POWERPLAY 無線充電遊戲滑鼠墊
+            image: http://img.udn.com/image/product/S0000390/APPROVED/U010193378/20180124150533274_135.jpg
+            price: "480"
+            is_favorite: false
+            link:
+              type: product
+              value: "2"
+              transitions: push
+
+    link: 
+      type: object
+      required: 
+        - type
+        - value
+        - transitions
+      description: |
+        link 格式與參數已 https://pse.is/LX8VW 為標準
+      properties:
+        type:
+          type: string
+          description: 定義頁面類型
+        value:
+          type: string
+          description: |
+            下個頁面所需參數
+            目前只有當 type 是 web_view、custom_page 時才會有值
+        transitions:
+          type: string
+          description: | 
+                過場方式 (default push)
+  securitySchemes:
+    bearerAuth:            # arbitrary name for the security scheme
+      type: http
+      scheme: bearer
+      bearerFormat: JWT 
+      description: "使用者Token (請在Header帶入Authorization格式需為Bearer token)"
