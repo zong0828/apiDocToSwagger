@@ -6,7 +6,7 @@ apiDoc json data file to swagger json file
 
 rename config file and set ur resource
 ```
-mv v3/config_example.php v3/config.php
+mv v1/config_example.php v1/config.php
 ```
 
 ## version
